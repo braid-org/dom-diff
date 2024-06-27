@@ -2,7 +2,7 @@
 create_dom_diff = async (html) => {
     if (!create_dom_diff.parser) create_dom_diff.parser = await new Promise(async (done) => {
         const TreeSitter = (typeof window != 'undefined') && window?.TreeSitter
-        const Parser = TreeSitter ?? require("web-tree-sitter")
+        const Parser = TreeSitter || require("web-tree-sitter")
         await Parser.init()
         const parser = new Parser()
         parser.setLanguage(await Parser.Language.load(TreeSitter ? "https://unpkg.com/@braidjs/dom-diff/tree-sitter-html.wasm" : require.resolve('@braidjs/dom-diff/tree-sitter-html.wasm')))
