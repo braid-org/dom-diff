@@ -1,6 +1,6 @@
 
 create_dom_diff = async (html) => {
-    if (!create_dom_diff.parser_p) create_dom_diff.parser_p = new Promise(async (done) => {
+    if (!create_dom_diff.parser) create_dom_diff.parser = await new Promise(async (done) => {
         const Parser = window.TreeSitter
         await Parser.init()
         let parser = new Parser()
@@ -8,7 +8,7 @@ create_dom_diff = async (html) => {
         done(parser)
     })
 
-    let parser = await create_dom_diff.parser_p
+    let parser = create_dom_diff.parser
     let tree = parser.parse(html)
 
     if (hasErrorNode(tree.rootNode)) {
