@@ -1,0 +1,10 @@
+{
+  "name": "@braidjs/dom-diff",
+  "version": "0.0.1",
+  "description": "utilities for diffing html doms",
+  "author": "Braid Working Group",
+  "repository": "braid-org/dom-diff",
+  "homepage": "https://braid.org",
+  "dependencies": {
+  }
+}
