@@ -272,6 +272,7 @@ apply_dom_diff = (dom, diff) => {
     let offsets = new Map()
 
     diff.forEach((change) => {
+        let node = dom
         const [path, newValue] = [change.range, change.content]
         const indexes = []
         let insert_position = null
@@ -280,9 +281,16 @@ apply_dom_diff = (dom, diff) => {
                 insert_position = 1 * _2
             } else indexes.push(1 * _1)
         })
-        if (insert_position == null) insert_position = indexes.pop()
 
-        let node = dom
+        if (indexes.length === 0) {
+            // If there are no indicies, we assume we're deleting everything
+            while (node.firstChild) node.removeChild(node.firstChild)
+            offsets.set(node, 0)
+            node.innerHTML = newValue
+            return
+        }
+
+        if (insert_position == null) insert_position = indexes.pop()
 
         for (let i = 0; i < indexes.length; i++) {
             node = Array.from(node.childNodes)[indexes[i]]
