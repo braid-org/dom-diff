@@ -45,6 +45,8 @@ create_dom_diff = async (html) => {
 
             let new_tree = parser.parse(new_html, tree_copy)
 
+            if (hasErrorNode(new_tree.rootNode)) return []
+
             let diff = get_tree_diff(tree, tree_copy, new_tree, html, new_html)
 
             html = new_html
@@ -250,6 +252,12 @@ create_dom_diff = async (html) => {
         }
 
         return [prefixLength, oldSuffixStart, newSuffixStart]
+    }
+
+    function hasErrorNode(node) {
+        if (node.type === "ERROR") return true
+        for (let i = 0; i < node.childCount; i++)
+            if (hasErrorNode(node.child(i))) return true
     }
 }
 
