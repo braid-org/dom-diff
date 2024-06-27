@@ -11,7 +11,13 @@ create_dom_diff = async (html) => {
     let parser = await create_dom_diff.parser_p
     let tree = parser.parse(html)
 
+    if (hasErrorNode(tree.rootNode)) {
+        html = ''
+        tree = parser.parse(html)
+    }
+
     return {
+        get: () => html,
         patch: (...args) => {
             let [start, end, content, start_row_col, end_row_col, end2_row_col] = args
 
