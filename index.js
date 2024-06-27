@@ -4,7 +4,7 @@ async function create_dom_diff(html) {
         const Parser = window.TreeSitter
         await Parser.init()
         let parser = new Parser()
-        parser.setLanguage(await Parser.Language.load("https://bloop.monster/tree-sitter-html.wasm"))
+        parser.setLanguage(await Parser.Language.load("https://unpkg.com/@braidjs/dom-diff/tree-sitter-html.wasm"))
         done(parser)
     })
 
