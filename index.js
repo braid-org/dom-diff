@@ -1,5 +1,5 @@
 
-async function create_dom_diff(html) {
+create_dom_diff = async (html) => {
     if (!create_dom_diff.parser_p) create_dom_diff.parser_p = new Promise(async (done) => {
         const Parser = window.TreeSitter
         await Parser.init()
@@ -253,7 +253,7 @@ async function create_dom_diff(html) {
     }
 }
 
-function apply_dom_diff(dom, diff) {
+apply_dom_diff = (dom, diff) => {
     let offsets = new Map()
 
     diff.forEach((change) => {
