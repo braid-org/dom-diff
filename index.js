@@ -347,7 +347,7 @@ serve_dom_diff = async (req, res, options) => {
 
     await init_dom_diff()
 
-    let g = dom_diff_serve
+    let g = serve_dom_diff
     if (!g.resources) g.resources = {}
     let r = g.resources[key]
 
