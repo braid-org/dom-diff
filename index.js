@@ -323,3 +323,109 @@ apply_dom_diff = (dom, diff) => {
         }
     })
 }
+
+serve_dom_diff = async (req, res, options) => {
+    require("braid-http").http_server(req, res)
+
+    let key = options?.key || req.url.split('?')[0]
+
+    res.setHeader("Access-Control-Allow-Origin", "*")
+    res.setHeader("Access-Control-Allow-Methods", "*")
+    res.setHeader("Access-Control-Allow-Headers", "*")
+    res.setHeader("Access-Control-Expose-Headers", "*")
+
+    res.setHeader("Content-Type", "text/html; charset=utf-8")
+    res.setHeader("Merge-Type", "simpleton")
+    res.setHeader("Editable", "true")
+
+    function my_end(statusCode, x) {
+        res.statusCode = statusCode
+        res.end(x ?? "")
+    }
+
+    if (req.method == "HEAD") return my_end(200)
+
+    await init_dom_diff()
+
+    let g = dom_diff_serve
+    if (!g.resources) g.resources = {}
+    let r = g.resources[key]
+
+    res.startSubscription({
+        onClose: () => {
+            r.clients.delete(res)
+            if (r.clients.size === 0) {
+                delete g.resources[key]
+            }
+        },
+    })
+
+    if (!r) {
+        r = g.resources[key] = {}
+        r.dd = null
+        r.version = []
+
+        r.clients = new Set()
+        r.clients.add(res)
+
+        require("braid-text").get(key, {
+            subscribe: ({ version, parents, body, patches }) => {
+                console.log(`local: ${JSON.stringify({ version, parents, body, patches }, null, 4)}`)
+
+                let update = {
+                    version,
+                    parents: r.version,
+                }
+
+                if (body != null) {
+                    r.dd = create_dom_diff(body)
+                    update.body = r.dd.get()
+                } else {
+                    let new_dom_string = apply_patches_to_string(r.dd.get(), patches)
+
+                    let diff = r.dd.patch(new_dom_string)
+                    if (!diff.length) return
+
+                    for (let d of diff) {
+                        console.log(`diff ${d.range} = ${d.content?.slice(0, 100) ?? "DELETE"}`)
+                    }
+
+                    update.patches = diff.map((x) => {
+                        return {
+                            unit: "xpath",
+                            content: "",
+                            ...x,
+                        }
+                    })
+                }
+
+                console.log(`update = ${JSON.stringify(update, null, 4)}`)
+                for (c of r.clients) c.sendUpdate(update)
+                r.version = version
+            },
+        })
+    } else {
+        r.clients.add(res)
+
+        if (r.dd)
+            res.sendUpdate({
+                version: r.version,
+                parents: [],
+                body: r.dd.get(),
+            })
+    }
+
+    function apply_patches_to_string(s, patches) {
+        let offset = 0
+        for (let p of patches) {
+            let [start, end] = p.range.match(/\d+/g).map((x) => 1 * x)
+            start += offset
+            end += offset
+            offset -= end - start
+            offset += p.content.length
+
+            s = s.substring(0, start) + p.content + s.substring(end)
+        }
+        return s
+    }
+}
