@@ -1,18 +1,18 @@
 # DOM Diffing and Synchronization over Braid-HTTP
 
-This library provides a set of tools for efficient DOM diffing and synchronization over the Braid-HTTP protocol, enabling real-time collaborative editing of HTML content.
+Efficiently diff and synchronization a DOM, either locally or over the network via [Braid-HTTP](https://datatracker.ietf.org/doc/html/draft-toomim-httpbis-braid-http).  Sync multiple browser & server DOMs over the network.  Collaboratively edit live HTML.  Create mashups of UIs, interoperating via DOM diffs.
 
-- Supports [Braid-HTTP](https://github.com/braid-org/braid-spec/blob/master/draft-toomim-httpbis-braid-http-04.txt) protocol
-- Utilizes Tree-sitter for robust HTML parsing
+- Supports [Braid-HTTP 04](https://github.com/braid-org/braid-spec/blob/master/draft-toomim-httpbis-braid-http-04.txt) protocol
+- Uses Tree-sitter for robust, incremental HTML parsing
 - Implements DOM diffing algorithm over Tree-sitter
-- Supports server-side handling of collaborative DOM editing
+- Run it on server or client
 - Developed as part of the [braid.org](https://braid.org) project
 
 This library makes it easy to add collaborative HTML editing to your web applications, allowing multiple users to edit the same DOM structure in real-time.
 
 ## General Use on Server
 
-Install it in your project:
+Install in your project:
 ```shell
 npm install @braidjs/dom-diff
 ```
@@ -29,6 +29,8 @@ http_server.on("request", (req, res) => {
   serve_dom_diff(req, res)
 })
 ```
+
+> Todo: explain what serve_dom_diff is going to do.  I believe there is a text resource somewhere... and then a HTML version of the resource... and it will ... read changes to one, and write patches to the other?
 
 ## Server API
 
