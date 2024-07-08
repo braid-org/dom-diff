@@ -26,17 +26,22 @@ http_server.on("request", (req, res) => {
   // Your server logic...
 
   // Serve DOM diffing for this request/response:
-  serve_dom_diff(req, res)
+  serve_dom_diff(req, res, (subscribe) => {
+
+    // The DOM diffing needs to subscribe to an underlying textual representation
+    require("braid-text").get(req.url, {subscribe})
+  })
 })
 ```
 
-> Todo: explain what serve_dom_diff is going to do.  I believe there is a text resource somewhere... and then a HTML version of the resource... and it will ... read changes to one, and write patches to the other?
+The first thing `serve_dom_diff` does is subscribe to an underlying textual resource using the suplied callback with the `subscribe` function. Then, it responds to the request with a braid subscription using the `simpleton` merge type for html, which consists of sending replacement html for a given `xpath`. Whenever changes are made to the underlying textual resource, `serve_dom_diff` will figure out the relevant changes to the DOM, and send these patches to all subscribed clients.
 
 ## Server API
 
 `serve_dom_diff(req, res, options)`
   - `req`: Incoming HTTP request object.
   - `res`: Outgoing HTTP response object.
+  - `braid_text_cb`: 
   - `options`: <small style="color:lightgrey">[optional]</small> An object containing additional options:
     - `key`:  <small style="color:lightgrey">[optional]</small> ID of HTML resource to sync with. Defaults to `req.url`.
   - This method handles Braid-HTTP requests for collaborative DOM editing.

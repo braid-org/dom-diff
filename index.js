@@ -324,7 +324,7 @@ apply_dom_diff = (dom, diff) => {
     })
 }
 
-serve_dom_diff = async (req, res, options) => {
+serve_dom_diff = async (req, res, braid_text_cb, options) => {
     require("braid-http").http_server(req, res)
 
     let key = options?.key || req.url.split('?')[0]
@@ -368,41 +368,39 @@ serve_dom_diff = async (req, res, options) => {
         r.clients = new Set()
         r.clients.add(res)
 
-        require("braid-text").get(key, {
-            subscribe: ({ version, parents, body, patches }) => {
-                console.log(`local: ${JSON.stringify({ version, parents, body, patches }, null, 4)}`)
+        braid_text_cb(({ version, parents, body, patches }) => {
+            console.log(`local: ${JSON.stringify({ version, parents, body, patches }, null, 4)}`)
 
-                let update = {
-                    version,
-                    parents: r.version,
+            let update = {
+                version,
+                parents: r.version,
+            }
+
+            if (body != null) {
+                r.dd = create_dom_diff(body)
+                update.body = r.dd.get()
+            } else {
+                let new_dom_string = apply_patches_to_string(r.dd.get(), patches)
+
+                let diff = r.dd.patch(new_dom_string)
+                if (!diff.length) return
+
+                for (let d of diff) {
+                    console.log(`diff ${d.range} = ${d.content?.slice(0, 100) ?? "DELETE"}`)
                 }
 
-                if (body != null) {
-                    r.dd = create_dom_diff(body)
-                    update.body = r.dd.get()
-                } else {
-                    let new_dom_string = apply_patches_to_string(r.dd.get(), patches)
-
-                    let diff = r.dd.patch(new_dom_string)
-                    if (!diff.length) return
-
-                    for (let d of diff) {
-                        console.log(`diff ${d.range} = ${d.content?.slice(0, 100) ?? "DELETE"}`)
+                update.patches = diff.map((x) => {
+                    return {
+                        unit: "xpath",
+                        content: "",
+                        ...x,
                     }
+                })
+            }
 
-                    update.patches = diff.map((x) => {
-                        return {
-                            unit: "xpath",
-                            content: "",
-                            ...x,
-                        }
-                    })
-                }
-
-                console.log(`update = ${JSON.stringify(update, null, 4)}`)
-                for (c of r.clients) c.sendUpdate(update)
-                r.version = version
-            },
+            console.log(`update = ${JSON.stringify(update, null, 4)}`)
+            for (c of r.clients) c.sendUpdate(update)
+            r.version = version
         })
     } else {
         r.clients.add(res)
