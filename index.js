@@ -155,14 +155,14 @@ create_dom_diff = (html) => {
             if (!aa && !bb) break
             else if (aa && bb && same_node(oo, aa, bb)) {
                 if (aa.type == "element") {
-                    path.push(`${aa.type}[${i}]`)
+                    path.push(`*[${i}]`)
                     get_element_diff(oo, aa, bb, path, diff, a_text, b_text)
                     path.pop()
                 }
                 i++
                 j++
             } else if (aa && (!bb || aa.startIndex <= bb.startIndex)) {
-                diff.push({ range: `/${path_join("/")}${aa.type}[${i}]` })
+                diff.push({ range: `/${path_join("/")}*[${i}]` })
                 i++
             } else {
                 diff.push({ range: `/${path_join("/")}*[${i}:${i}]`, content: bb.text })
