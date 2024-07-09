@@ -48,6 +48,14 @@ http_server.on("request", (req, res) => {
 
 ## Client-side Usage
 
+Include the library in your client-side JavaScript.
+
+```html
+<script src="https://unpkg.com/@braidjs/dom-diff"></script>
+```
+
+Once included, you can use the DOM diffing functionality in your client-side code:
+
 ```javascript
 // Initialize DOM diffing
 await init_dom_diff()
@@ -60,6 +68,11 @@ let currentHtml = dd.get()
 
 // Apply a patch and get the diff
 let diff = dd.patch(newHtml)
+
+// Perhaps send diff over network
+// Here's an example diff:
+[{ range: `/*[1]/*[2:2]`, content: '<b>hi</b>' },
+ { range: `/*[2:2]`, content: 'world' }]
 
 // Apply DOM diff to actual DOM
 apply_dom_diff(domElement, diff)
