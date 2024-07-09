@@ -1,13 +1,12 @@
 {
   "name": "@braidjs/dom-diff",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "utilities for diffing html doms",
   "author": "Braid Working Group",
   "repository": "braid-org/dom-diff",
   "homepage": "https://braid.org",
   "dependencies": {
     "braid-http": "^0.3.20",
-    "braid-text": "^0.0.15",
     "web-tree-sitter": "^0.22.6"
   }
 }
