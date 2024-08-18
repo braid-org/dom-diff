@@ -1,5 +1,7 @@
 # DOM Diffing and Synchronization over Braid-HTTP
 
+> **Note:** Currently buggy! WIP.
+
 Efficiently diff and synchronize a DOM, either locally or over the network via [Braid-HTTP](https://datatracker.ietf.org/doc/html/draft-toomim-httpbis-braid-http).  Sync multiple browser & server DOMs over the network, via Dom Diffs.  Collaboratively edit live HTML.  Create mashups of UIs, interoperating via Dom Diffs.
 
 - Supports [Braid-HTTP 04](https://github.com/braid-org/braid-spec/blob/master/draft-toomim-httpbis-braid-http-04.txt) protocol
