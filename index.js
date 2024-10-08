@@ -335,7 +335,7 @@ serve_dom_diff = async (req, res, braid_text_cb, options) => {
     res.setHeader("Access-Control-Expose-Headers", "*")
 
     res.setHeader("Content-Type", "text/html; charset=utf-8")
-    res.setHeader("Merge-Type", "simpleton-html")
+    res.setHeader("Merge-Type", "simpleton")
     res.setHeader("Editable", "true")
 
     function my_end(statusCode, x) {
