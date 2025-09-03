@@ -1,6 +1,6 @@
 {
   "name": "@braidjs/dom-diff",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "utilities for diffing html doms",
   "author": "Braid Working Group",
   "repository": "braid-org/dom-diff",
